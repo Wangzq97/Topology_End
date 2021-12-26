@@ -1,12 +1,8 @@
 package com.example.topology_end;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 public class TelnetController {
     public String hello() {
@@ -60,7 +56,7 @@ public class TelnetController {
      *
      * @param dev_no    设备编号
      * @param ip_list   ip列表（两个，对应s0和s1，如果没有则为“”或“0.0.0.0”）
-     * @param mask_list 掩码列表（两个，对应s0和s1，如果没有则为“0”）
+     * @param mask_list 掩码列表（两个，对应s0和s1，格式应形如“255.255.255.0”，如果没有则为“0”）
      */
     public String init_serial(String dev_no, String[] ip_list, String[] mask_list) {
         //login device
@@ -107,6 +103,54 @@ public class TelnetController {
             }
         }
     }
+
+
+    /**
+     * 初始化设定回环接口
+     *
+     * @param dev_no 设备编号
+     * @param port   回环接口的端口（例如loopback 0中的0）
+     * @param ip     ip地址
+     * @param mask   掩码
+     */
+    public String init_loopback(String dev_no, String port, String ip, String mask) {
+        //login device
+        Logger logger = LoggerFactory.getLogger(TelnetController.class);
+        logger.info("Get request, init loopback");
+        JSONObject result = new JSONObject();
+
+
+        telnetClient device = get_device(dev_no);
+        if (device == null) {
+            //device is not exist.
+            return null_device_return(logger, result, dev_no);
+        } else {
+            try {
+                BooleanResult boolean_result = device.initLoopback(port, ip, mask);
+                logger.info(boolean_result.string_result);
+                if (!boolean_result.boolean_result) {
+                    result.put("state", false);
+                    String msg = boolean_result.string_result;
+                    result.put("msg", msg);
+                    logger.error(msg);
+                    return result.toJSONString();
+                }
+                result.put("state", true);
+                String msg = dev_no + " init loopback success.";
+                result.put("msg", msg);
+                logger.info(msg);
+                return result.toJSONString();
+            } catch (Exception e) {
+                result.put("state", false);
+                String msg = "Service error.";
+                result.put("msg", msg);
+                logger.error(msg);
+                return result.toJSONString();
+            }
+        }
+
+    }
+
 
     /**
      * 获取设备信息（路由表和路由协议）

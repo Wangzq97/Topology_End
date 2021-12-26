@@ -22,128 +22,54 @@ public class TelnetClientController {
         //login device
         Logger logger = LoggerFactory.getLogger(TelnetClientController.class);
         logger.info("POST Request, telnet login");
-        JSONObject result = new JSONObject();
 
         String dev_no = (String) data.get("dev_no");
         String ip = (String) data.get("ip");
         String pwd = (String) data.get("pwd");
-        telnetClient device = get_device(dev_no);
-
-        if (device == null) {
-            //device is not exist.
-            return null_device_return(logger, result, dev_no);
-        } else {
-            try {
-                Boolean state = device.login(ip, 23, pwd);
-                if (!state) {
-                    result.put("state", false);
-                    String msg = "Login fail, wrong password.";
-                    result.put("msg", msg);
-                    logger.info(msg);
-                } else {
-                    result.put("state", true);
-                    String msg = dev_no + " login success.";
-                    result.put("msg", msg);
-                    logger.info(msg);
-                }
-                return result.toJSONString();
-            } catch (Exception e) {
-                result.put("state", false);
-                String msg = "Service error.";
-                result.put("msg", msg);
-                logger.error(msg);
-                return result.toJSONString();
-            }
-        }
+        return TopologyEndApplication.telnet_controller.telnet_login(dev_no, ip, pwd);
     }
 
-    @RequestMapping(value = "/init", method = RequestMethod.POST)
+    @RequestMapping(value = "/init/serial", method = RequestMethod.POST)
     public String init_serial(@RequestBody JSONObject data) {
         //login device
         Logger logger = LoggerFactory.getLogger(TelnetClientController.class);
         logger.info("POST Request, init serial");
-        JSONObject result = new JSONObject();
 
         String dev_no = (String) data.get("dev_no");
         JSONArray json_ip_list = data.getJSONArray("ip_list");
+        String[] ip_list = get_stringArray_from_jsonArray(json_ip_list);
+
         JSONArray json_mask_list = data.getJSONArray("mask_list");
+        String[] mask_list = get_stringArray_from_jsonArray(json_mask_list);
 
-        if (json_ip_list.size() != json_mask_list.size()) {
-            result.put("state", false);
-            String msg = "POST param error. Ip_list doesn't have the same length as mask_list";
-            result.put("msg", msg);
-            logger.error(msg);
-            return result.toJSONString();
-        }
-        telnetClient device = get_device(dev_no);
-
-        if (device == null) {
-            //device is not exist.
-            return null_device_return(logger, result, dev_no);
-        } else {
-            try {
-                for (int i = 0; i < json_ip_list.size(); i++) {
-                    String ip = (String) json_ip_list.get(i);
-                    String mask = (String) json_mask_list.get(i);
-                    BooleanResult boolean_result = device.initSerial(i, ip, mask);
-                    logger.info(boolean_result.string_result);
-                    if (!boolean_result.boolean_result) {
-                        result.put("state", false);
-                        String msg = boolean_result.string_result;
-                        result.put("msg", msg);
-                        logger.error(msg);
-                        return result.toJSONString();
-                    }
-                }
-                result.put("state", true);
-                String msg = dev_no + " init serial success.";
-                result.put("msg", msg);
-                logger.info(msg);
-                return result.toJSONString();
-            } catch (Exception e) {
-                result.put("state", false);
-                String msg = "Service error.";
-                result.put("msg", msg);
-                logger.error(msg);
-                return result.toJSONString();
-            }
-        }
+        return TopologyEndApplication.telnet_controller.init_serial(dev_no, ip_list, mask_list);
     }
+
+
+    @RequestMapping(value = "/init/loopback", method = RequestMethod.POST)
+    public String init_loopback(@RequestBody JSONObject data) {
+        //login device
+        Logger logger = LoggerFactory.getLogger(TelnetClientController.class);
+        logger.info("POST Request, init loopback");
+
+        String dev_no = (String) data.get("dev_no");
+        String port = (String) data.get("port");
+        String ip = (String) data.get("ip");
+        String mask = (String) data.get("mask");
+
+        return TopologyEndApplication.telnet_controller.init_loopback(dev_no, port, ip, mask);
+    }
+
 
     @RequestMapping(value = "/info", method = RequestMethod.POST)
     public String get_info(@RequestBody JSONObject data) {
         //login device
         Logger logger = LoggerFactory.getLogger(TelnetClientController.class);
         logger.info("POST Request, get device info");
-        JSONObject result = new JSONObject();
 
         String dev_no = (String) data.get("dev_no");
-        telnetClient device = get_device(dev_no);
-        if (device == null) {
-            //device is not exist.
-            return null_device_return(logger, result, dev_no);
-        } else {
-            try {
-                device.sendCommand("terminal length 0");  //命令不分页显示
-                String route = device.sendCommand("show ip route");
-                String protocol = device.sendCommand("show ip protocols");
-                String msg = get_protocol(protocol);
-                JSONObject info = new JSONObject();
-                info.put("route", route);
-                info.put("protocol", protocol);
-                result.put("state", true);
-                result.put("msg", msg);
-                result.put("info", info);
-                logger.info(msg);
-                return result.toJSONString();
-            } catch (Exception e) {
-                result.put("state", false);
-                String msg = "Service error.";
-                result.put("msg", msg);
-                logger.error(msg);
-                return result.toJSONString();
-            }
-        }
+
+        return TopologyEndApplication.telnet_controller.get_info(dev_no);
     }
 
     @RequestMapping(value = "/config/rip", method = RequestMethod.POST)
@@ -153,49 +79,13 @@ public class TelnetClientController {
         logger.info("POST Request, config rip");
         JSONObject result = new JSONObject();
         String dev_no = (String) data.get("dev_no");
-        JSONArray network_list = data.getJSONArray("network_list");
-        JSONArray mask_list = data.getJSONArray("mask_list");
-        telnetClient device = get_device(dev_no);
+        JSONArray json_network_list = data.getJSONArray("network_list");
+        String[] network_list = get_stringArray_from_jsonArray(json_network_list);
 
-        if (network_list.size() != mask_list.size()) {
-            result.put("state", false);
-            String msg = "POST param error. network_list doesn't have the same length as mask_list";
-            result.put("msg", msg);
-            logger.error(msg);
-            return result.toJSONString();
-        }
+        JSONArray json_mask_list = data.getJSONArray("mask_list");
+        String[] mask_list = get_stringArray_from_jsonArray(json_mask_list);
 
-        if (device == null) {
-            //device is not exist.
-            return null_device_return(logger, result, dev_no);
-        } else {
-            try {
-                device.clear_router();
-                for (int i = 0; i < network_list.size(); i++) {
-                    String network = (String) network_list.get(i);
-                    String mask = (String) mask_list.get(i);
-                    BooleanResult boolean_result = device.configRip(network, mask);
-                    if (!boolean_result.boolean_result) {
-                        result.put("state", false);
-                        String msg = boolean_result.string_result;
-                        result.put("msg", msg);
-                        logger.error(msg);
-                        return result.toJSONString();
-                    }
-                }
-                result.put("state", true);
-                String msg = dev_no + " RIP config success.";
-                result.put("msg", msg);
-                logger.info(msg);
-                return result.toJSONString();
-            } catch (Exception e) {
-                result.put("state", false);
-                String msg = "Service error.";
-                result.put("msg", msg);
-                logger.error(msg);
-                return result.toJSONString();
-            }
-        }
+        return TopologyEndApplication.telnet_controller.config_rip(dev_no, network_list, mask_list);
     }
 
     @RequestMapping(value = "/config/ospf", method = RequestMethod.POST)
@@ -205,51 +95,17 @@ public class TelnetClientController {
         logger.info("POST Request, config rip");
         JSONObject result = new JSONObject();
         String dev_no = (String) data.get("dev_no");
-        JSONArray network_list = data.getJSONArray("network_list");
-        JSONArray area_list = data.getJSONArray("area_list");
-        JSONArray mask_list = data.getJSONArray("mask_list");
-        telnetClient device = get_device(dev_no);
-        if (network_list.size() != mask_list.size() || network_list.size() != area_list.size()) {
-            result.put("state", false);
-            String msg = "POST param error. network_list, area_list and mask_list don't have the same length";
-            result.put("msg", msg);
-            logger.error(msg);
-            return result.toJSONString();
-        }
+        JSONArray json_network_list = data.getJSONArray("network_list");
+        String[] network_list = get_stringArray_from_jsonArray(json_network_list);
 
-        if (device == null) {
-            //device is not exist.
-            return null_device_return(logger, result, dev_no);
-        } else {
-            try {
-                device.clear_router();
-                for (int i = 0; i < network_list.size(); i++) {
-                    String network = (String) network_list.get(i);
-                    String area = (String) area_list.get(i);
-                    String mask = (String) mask_list.get(i);
+        JSONArray json_area_list = data.getJSONArray("area_list");
+        String[] area_list = get_stringArray_from_jsonArray(json_area_list);
 
-                    BooleanResult boolean_result = device.configOspf(network, area, mask);
-                    if (!boolean_result.boolean_result) {
-                        result.put("state", false);
-                        String msg = boolean_result.string_result;
-                        result.put("msg", msg);
-                        logger.error(msg);
-                        return result.toJSONString();
-                    }
-                }
-                result.put("state", true);
-                String msg = dev_no + " OSPF config success.";
-                result.put("msg", msg);
-                logger.info(msg);
-                return result.toJSONString();
-            } catch (Exception e) {
-                result.put("state", false);
-                String msg = "Service error.";
-                result.put("msg", msg);
-                logger.error(msg);
-                return result.toJSONString();
-            }
-        }
+        JSONArray json_mask_list = data.getJSONArray("mask_list");
+        String[] mask_list = get_stringArray_from_jsonArray(json_mask_list);
+
+        return TopologyEndApplication.telnet_controller.config_ospf(dev_no, network_list, mask_list, area_list);
+
     }
 
     @RequestMapping(value = "/ping", method = RequestMethod.POST)
@@ -260,68 +116,16 @@ public class TelnetClientController {
         JSONObject result = new JSONObject();
         String dev_no = (String) data.get("dev_no");
         String ip = (String) data.get("ip");
-        telnetClient device = get_device(dev_no);
-        if (device == null) {
-            //device is not exist.
-            return null_device_return(logger, result, dev_no);
-        } else {
-            try {
-                BooleanResult boolean_result = device.ping(ip);
-                if(boolean_result.boolean_result) {
-                    result.put("state", true);
-                }else{
-                    result.put("state", false);
-                }
-                String msg =boolean_result.string_result;
-                result.put("msg", msg);
-                logger.info(msg);
-                return result.toJSONString();
-            } catch (Exception e) {
-                result.put("state", false);
-                String msg = "Service error.";
-                result.put("msg", msg);
-                logger.error(msg);
-                return result.toJSONString();
-            }
-        }
+
+        return TopologyEndApplication.telnet_controller.ping(dev_no, ip);
     }
 
 
-    private String null_device_return(Logger logger, JSONObject result, String dev_no) {
-        result.put("state", false);
-        String msg = "";
-        msg += (dev_no + " is not exist.");
-        msg += ("All support devices are: s0, r0, r1, r2.");
-        result.put("msg", msg);
-        logger.info(msg);
-        return result.toJSONString();
-    }
-
-    private telnetClient get_device(String dev_no) {
-        //get device by dev_no
-        if (dev_no.equals("s0")) {
-            return TopologyEndApplication.switch0;
+    private String[] get_stringArray_from_jsonArray(JSONArray jsonArray) {
+        String[] result = new String[jsonArray.size()];
+        for (int i = 0; i < jsonArray.size(); i++) {
+            result[i] = (String) jsonArray.get(i);
         }
-        if (dev_no.equals("r0")) {
-            return TopologyEndApplication.router0;
-        }
-        if (dev_no.equals("r1")) {
-            return TopologyEndApplication.router1;
-        }
-        if (dev_no.equals("r2")) {
-            return TopologyEndApplication.router2;
-        }
-        return null;
-    }
-
-
-    String get_protocol(String protocol) {
-        if (protocol.contains("ospf")) {
-            return "当前路由协议: OSPF";
-        }
-        if (protocol.contains("rip")) {
-            return "当前路由协议: RIP";
-        }
-        return "尚未配置路由协议";
+        return result;
     }
 }

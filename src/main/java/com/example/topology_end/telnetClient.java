@@ -101,6 +101,33 @@ public class telnetClient {
 
 
     /**
+     * 设置回环接口
+     *
+     * @param port        回环接口的端口
+     * @param loopback_ip 回环接口的ip
+     * @param mask        回环接口的子网掩码
+     */
+    public BooleanResult initLoopback(String port, String loopback_ip, String mask) {
+        if (out == null) {
+            return new BooleanResult(false, "Device not login.");
+        }
+
+        StringBuilder info = new StringBuilder();
+        info.append(sendCommand("configure terminal"));
+        info.append("\n");
+        info.append(sendCommand("interface loopback" + port));
+        info.append("\n");
+        info.append(sendCommand("ip address " + loopback_ip + " " + mask));
+        info.append("\n");
+        info.append(sendCommand("no shutdown"));
+        info.append("\n");
+        info.append(sendCommand("exit"));
+        info.append(sendCommand("exit"));
+        return new BooleanResult(true, String.valueOf(info));
+    }
+
+
+    /**
      * ping
      *
      * @param ip 要ping的ip地址
@@ -233,8 +260,8 @@ public class telnetClient {
 
         //clear static route
         info.append(sendCommand("configure terminal"));
-        for(String command : static_route_list){
-            info.append(sendCommand("no "+command));
+        for (String command : static_route_list) {
+            info.append(sendCommand("no " + command));
         }
         info.append(sendCommand("exit"));
         static_route_list.clear();
