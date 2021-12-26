@@ -21,7 +21,7 @@ public class TelnetClientController {
     public String telnet_login(@RequestBody JSONObject data) {
         //login device
         Logger logger = LoggerFactory.getLogger(TelnetClientController.class);
-        logger.info("POST Request, telnet login");
+        logger.info("POST Request, telnet login.");
 
         String dev_no = (String) data.get("dev_no");
         String ip = (String) data.get("ip");
@@ -33,7 +33,7 @@ public class TelnetClientController {
     public String init_serial(@RequestBody JSONObject data) {
         //login device
         Logger logger = LoggerFactory.getLogger(TelnetClientController.class);
-        logger.info("POST Request, init serial");
+        logger.info("POST Request, init serial.");
 
         String dev_no = (String) data.get("dev_no");
         JSONArray json_ip_list = data.getJSONArray("ip_list");
@@ -50,7 +50,7 @@ public class TelnetClientController {
     public String init_loopback(@RequestBody JSONObject data) {
         //login device
         Logger logger = LoggerFactory.getLogger(TelnetClientController.class);
-        logger.info("POST Request, init loopback");
+        logger.info("POST Request, init loopback.");
 
         String dev_no = (String) data.get("dev_no");
         String port = (String) data.get("port");
@@ -65,19 +65,40 @@ public class TelnetClientController {
     public String get_info(@RequestBody JSONObject data) {
         //login device
         Logger logger = LoggerFactory.getLogger(TelnetClientController.class);
-        logger.info("POST Request, get device info");
+        logger.info("POST Request, get device info.");
 
         String dev_no = (String) data.get("dev_no");
 
         return TopologyEndApplication.telnet_controller.get_info(dev_no);
     }
 
+
+    @RequestMapping(value = "/config/static", method = RequestMethod.POST)
+    public String config_static(@RequestBody JSONObject data) {
+        //login device
+        Logger logger = LoggerFactory.getLogger(TelnetClientController.class);
+        logger.info("POST Request, config static.");
+
+        String dev_no = (String) data.get("dev_no");
+        JSONArray json_network_list = data.getJSONArray("network_list");
+        String[] network_list = get_stringArray_from_jsonArray(json_network_list);
+
+        JSONArray json_mask_list = data.getJSONArray("mask_list");
+        String[] mask_list = get_stringArray_from_jsonArray(json_mask_list);
+
+        JSONArray json_target_list = data.getJSONArray("target_list");
+        String[] target_list = get_stringArray_from_jsonArray(json_target_list);
+
+        return TopologyEndApplication.telnet_controller.config_static(dev_no, network_list, mask_list, target_list);
+    }
+
+
     @RequestMapping(value = "/config/rip", method = RequestMethod.POST)
     public String config_rip(@RequestBody JSONObject data) {
         //login device
         Logger logger = LoggerFactory.getLogger(TelnetClientController.class);
-        logger.info("POST Request, config rip");
-        JSONObject result = new JSONObject();
+        logger.info("POST Request, config rip.");
+
         String dev_no = (String) data.get("dev_no");
         JSONArray json_network_list = data.getJSONArray("network_list");
         String[] network_list = get_stringArray_from_jsonArray(json_network_list);
@@ -92,8 +113,8 @@ public class TelnetClientController {
     public String config_ospf(@RequestBody JSONObject data) {
         //login device
         Logger logger = LoggerFactory.getLogger(TelnetClientController.class);
-        logger.info("POST Request, config rip");
-        JSONObject result = new JSONObject();
+        logger.info("POST Request, config rip.");
+
         String dev_no = (String) data.get("dev_no");
         JSONArray json_network_list = data.getJSONArray("network_list");
         String[] network_list = get_stringArray_from_jsonArray(json_network_list);
@@ -112,8 +133,8 @@ public class TelnetClientController {
     public String ping(@RequestBody JSONObject data) {
         //login device
         Logger logger = LoggerFactory.getLogger(TelnetClientController.class);
-        logger.info("POST Request, ping");
-        JSONObject result = new JSONObject();
+        logger.info("POST Request, ping.");
+
         String dev_no = (String) data.get("dev_no");
         String ip = (String) data.get("ip");
 

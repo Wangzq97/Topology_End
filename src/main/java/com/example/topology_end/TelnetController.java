@@ -19,7 +19,7 @@ public class TelnetController {
     public String telnet_login(String dev_no, String ip, String password) {
         //login device
         Logger logger = LoggerFactory.getLogger(TelnetController.class);
-        logger.info("Get request, telnet login");
+        logger.info("Get request, telnet login.");
         JSONObject result = new JSONObject();
 
         telnetClient device = get_device(dev_no);
@@ -61,7 +61,7 @@ public class TelnetController {
     public String init_serial(String dev_no, String[] ip_list, String[] mask_list) {
         //login device
         Logger logger = LoggerFactory.getLogger(TelnetController.class);
-        logger.info("Get request, init serial");
+        logger.info("Get request, init serial.");
         JSONObject result = new JSONObject();
 
         if (ip_list.length != 2 || mask_list.length != 2) {
@@ -191,6 +191,62 @@ public class TelnetController {
         }
     }
 
+
+    /**
+     * 设置静态路由协议
+     *
+     * @param dev_no       设备编号
+     * @param network_list 网络ip列表
+     * @param mask_list    掩码列表
+     * @param target_list  下一跳ip列表
+     */
+    public String config_static(String dev_no, String[] network_list, String[] mask_list, String[] target_list) {
+        //login device
+        Logger logger = LoggerFactory.getLogger(TelnetController.class);
+        logger.info("Get request, config static.");
+        JSONObject result = new JSONObject();
+
+        if (network_list.length != mask_list.length || target_list.length != mask_list.length) {
+            result.put("state", false);
+            String msg = "Param error. network_list, mask_list and target_list don't have the same length.";
+            result.put("msg", msg);
+            logger.error(msg);
+            return result.toJSONString();
+        }
+
+        telnetClient device = get_device(dev_no);
+        if (device == null) {
+            //device is not exist.
+            return null_device_return(logger, result, dev_no);
+        } else {
+            try {
+                device.clear_router();
+                for (int i = 0; i < network_list.length; i++) {
+                    BooleanResult boolean_result = device.configStatic(network_list[i], mask_list[i], target_list[i]);
+                    if (!boolean_result.boolean_result) {
+                        result.put("state", false);
+                        String msg = boolean_result.string_result;
+                        result.put("msg", msg);
+                        logger.error(msg);
+                        return result.toJSONString();
+                    }
+                }
+                result.put("state", true);
+                String msg = dev_no + " static route config success.";
+                result.put("msg", msg);
+                logger.info(msg);
+                return result.toJSONString();
+            } catch (Exception e) {
+                result.put("state", false);
+                String msg = "Service error.";
+                result.put("msg", msg);
+                logger.error(msg);
+                return result.toJSONString();
+            }
+        }
+    }
+
+
     /**
      * 设置RIP路由协议
      *
@@ -201,12 +257,12 @@ public class TelnetController {
     public String config_rip(String dev_no, String[] network_list, String[] mask_list) {
         //login device
         Logger logger = LoggerFactory.getLogger(TelnetController.class);
-        logger.info("Get request, config rip");
+        logger.info("Get request, config rip.");
         JSONObject result = new JSONObject();
 
         if (network_list.length != mask_list.length) {
             result.put("state", false);
-            String msg = "Param error. network_list doesn't have the same length as mask_list";
+            String msg = "Param error. network_list doesn't have the same length as mask_list.";
             result.put("msg", msg);
             logger.error(msg);
             return result.toJSONString();
@@ -255,12 +311,12 @@ public class TelnetController {
     public String config_ospf(String dev_no, String[] network_list, String[] mask_list, String[] area_list) {
         //login device
         Logger logger = LoggerFactory.getLogger(TelnetController.class);
-        logger.info("Get request, config ospf");
+        logger.info("Get request, config ospf.");
         JSONObject result = new JSONObject();
 
         if (network_list.length != mask_list.length || network_list.length != area_list.length) {
             result.put("state", false);
-            String msg = "POST param error. Network_list, area_list and mask_list don't have the same length";
+            String msg = "POST param error. Network_list, area_list and mask_list don't have the same length.";
             result.put("msg", msg);
             logger.error(msg);
             return result.toJSONString();
@@ -307,7 +363,7 @@ public class TelnetController {
     public String ping(String dev_no, String ip) {
         //login device
         Logger logger = LoggerFactory.getLogger(TelnetController.class);
-        logger.info("Get request, ping");
+        logger.info("Get request, ping.");
         JSONObject result = new JSONObject();
 
         telnetClient device = get_device(dev_no);
@@ -382,11 +438,11 @@ public class TelnetController {
      */
     String get_protocol(String protocol) {
         if (protocol.contains("ospf")) {
-            return "当前路由协议: OSPF";
+            return "当前路由协议: OSPF.";
         }
         if (protocol.contains("rip")) {
-            return "当前路由协议: RIP";
+            return "当前路由协议: RIP.";
         }
-        return "尚未配置路由协议";
+        return "尚未配置路由协议.";
     }
 }

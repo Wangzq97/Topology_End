@@ -5,11 +5,8 @@ import org.apache.commons.net.telnet.TelnetClient;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 
 public class telnetClient {
     private String name = "default";        //设备名称
