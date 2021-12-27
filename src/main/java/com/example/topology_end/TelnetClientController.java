@@ -17,6 +17,7 @@ public class TelnetClientController {
         return "动态路由后端，Running on http://localhost:8999/";
     }
 
+
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public String telnet_login(@RequestBody JSONObject data) {
         //login device
@@ -28,6 +29,20 @@ public class TelnetClientController {
         String pwd = (String) data.get("pwd");
         return TopologyEndApplication.telnet_controller.telnet_login(dev_no, ip, pwd);
     }
+
+
+    @RequestMapping(value = "/send_command", method = RequestMethod.POST)
+    public String send_command(@RequestBody JSONObject data) {
+        //login device
+        Logger logger = LoggerFactory.getLogger(TelnetClientController.class);
+        logger.info("POST Request, send command.");
+
+        String dev_no = (String) data.get("dev_no");
+        String command = (String) data.get("command");
+
+        return TopologyEndApplication.telnet_controller.send_command(dev_no, command);
+    }
+
 
     @RequestMapping(value = "/init/serial", method = RequestMethod.POST)
     public String init_serial(@RequestBody JSONObject data) {

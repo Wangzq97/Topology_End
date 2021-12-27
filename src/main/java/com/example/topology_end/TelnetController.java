@@ -51,6 +51,30 @@ public class TelnetController {
         }
     }
 
+
+    /**
+     * 向设备发送命令
+     *
+     * @param dev_no  设备编号
+     * @param command 命令字符串
+     */
+    public String send_command(String dev_no, String command) {
+        Logger logger = LoggerFactory.getLogger(TelnetController.class);
+        logger.info("Get request, send command.");
+        JSONObject result = new JSONObject();
+
+        telnetClient device = get_device(dev_no);
+        if (device == null) {
+            return null_device_return(logger, result, dev_no);
+        } else {
+            String msg = device.sendCommand(command);
+            result.put("state", true);
+            result.put("msg", msg);
+            return result.toJSONString();
+        }
+    }
+
+
     /**
      * 初始化设定串行接口
      *
