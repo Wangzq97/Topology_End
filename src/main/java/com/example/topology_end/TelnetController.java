@@ -78,7 +78,7 @@ public class TelnetController {
     /**
      * 将设备回退到特权模式
      *
-     * @param dev_no  设备编号
+     * @param dev_no 设备编号
      */
     public String back_to_enable(String dev_no) {
         Logger logger = LoggerFactory.getLogger(TelnetController.class);
@@ -225,6 +225,53 @@ public class TelnetController {
                 result.put("msg", msg);
                 result.put("info", info);
                 logger.info(msg);
+                return result.toJSONString();
+            } catch (Exception e) {
+                result.put("state", false);
+                String msg = "Service error.";
+                result.put("msg", msg);
+                logger.error(msg);
+                return result.toJSONString();
+            }
+        }
+    }
+
+
+    /**
+     * 获取设备接口信息
+     *
+     * @param dev_no         设备编号
+     * @param interface_name 接口名称
+     */
+    public String get_interface_info(String dev_no, String interface_name) {
+        //login device
+        Logger logger = LoggerFactory.getLogger(TelnetController.class);
+        logger.info("Get request, get device interface info");
+        JSONObject result = new JSONObject();
+
+        telnetClient device = get_device(dev_no);
+        if (device == null) {
+            //device is not exist.
+            return null_device_return(logger, result, dev_no);
+        } else {
+            try {
+                device.sendCommand("terminal length 0");  //命令不分页显示
+                String info = device.sendCommand("show interface " + interface_name);
+                String[] info_list = info.split("\n");
+
+                result.put("link_state", info.contains("line protocol is up"));
+                result.put("ip", "");
+                for (String s : info_list) {
+                    if (s.contains("Internet address is ")) {
+                        int index = s.indexOf("Internet address is ");
+                        String ip = s.substring(index + "Internet address is ".length());
+                        result.put("ip", ip);
+                        break;
+                    }
+                }
+                result.put("state", true);
+                result.put("msg", info);
+                logger.info(info);
                 return result.toJSONString();
             } catch (Exception e) {
                 result.put("state", false);

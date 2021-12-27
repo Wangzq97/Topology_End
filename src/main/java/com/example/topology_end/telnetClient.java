@@ -105,6 +105,8 @@ public class telnetClient {
         info.append("\n");
         info.append(sendCommand("ip address " + serial_ip + " " + mask));
         info.append("\n");
+        info.append(sendCommand("clock rate 64000"));
+        info.append("\n");
         info.append(sendCommand("no shutdown"));
         info.append("\n");
         info.append(sendCommand("exit"));

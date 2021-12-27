@@ -1,3 +1,5 @@
+import com.alibaba.fastjson.JSONObject;
+
 import java.util.Scanner;
 
 public class test {
@@ -19,10 +21,43 @@ public class test {
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        while (sc.hasNextLine()) {
-            String network = sc.nextLine();
-            String mask = sc.nextLine();
-            System.out.println(calculateSegment(network, mask));
-        }
+//        String info = "Router#show interface FastEthernet0/0\n" +
+//                "FastEthernet0/0 is administratively down, line protocol is down (disabled)\n" +
+//                "  Hardware is Lance, address is 000d.bdba.e401 (bia 000d.bdba.e401)\n" +
+//                "  MTU 1500 bytes, BW 100000 Kbit, DLY 100 usec,\n" +
+//                "     reliability 255/255, txload 1/255, rxload 1/255\n" +
+//                "  Encapsulation ARPA, loopback not set\n" +
+//                "  ARP type: ARPA, ARP Timeout 04:00:00, \n" +
+//                "  Last input 00:00:08, output 00:00:05, output hang never\n" +
+//                "  Last clearing of \"show interface\" counters never\n" +
+//                "  Input queue: 0/75/0 (size/max/drops); Total output drops: 0\n" +
+//                "  Queueing strategy: fifo\n" +
+//                "  Output queue :0/40 (size/max)\n" +
+//                "  5 minute input rate 0 bits/sec, 0 packets/sec\n" +
+//                "  5 minute output rate 0 bits/sec, 0 packets/sec\n" +
+//                "     0 packets input, 0 bytes, 0 no buffer\n" +
+//                "     Received 0 broadcasts, 0 runts, 0 giants, 0 throttles\n" +
+//                "     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored, 0 abort\n" +
+//                "     0 input packets with dribble condition detected\n" +
+//                "     0 packets output, 0 bytes, 0 underruns\n" +
+//                "     0 output errors, 0 collisions, 1 interface resets\n" +
+//                "     0 babbles, 0 late collision, 0 deferred\n" +
+//                "     0 lost carrier, 0 no carrier\n" +
+//                "     0 output buffer failures, 0 output buffers swapped out";
+//
+//        String[] info_list = info.split("\n");
+//
+//        JSONObject result = new JSONObject();
+//        result.put("link_state", info.contains("line protocol is up"));
+//        result.put("ip", "");
+//        for (String s : info_list) {
+//            if (s.contains("Internet address is ")) {
+//                int index = s.indexOf("Internet address is ");
+//                String ip = s.substring(index + "Internet address is ".length());
+//                result.put("ip", ip);
+//            }
+//        }
+//
+//        System.out.println(result.toJSONString());
     }
 }

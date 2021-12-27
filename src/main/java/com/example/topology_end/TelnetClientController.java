@@ -100,6 +100,19 @@ public class TelnetClientController {
     }
 
 
+    @RequestMapping(value = "/interface_info", method = RequestMethod.POST)
+    public String get_interface_info(@RequestBody JSONObject data) {
+        //login device
+        Logger logger = LoggerFactory.getLogger(TelnetClientController.class);
+        logger.info("POST Request, get device interface info.");
+
+        String dev_no = (String) data.get("dev_no");
+        String interface_name = (String) data.get("interface");
+
+        return TopologyEndApplication.telnet_controller.get_interface_info(dev_no, interface_name);
+    }
+
+
     @RequestMapping(value = "/config/static", method = RequestMethod.POST)
     public String config_static(@RequestBody JSONObject data) {
         //login device
