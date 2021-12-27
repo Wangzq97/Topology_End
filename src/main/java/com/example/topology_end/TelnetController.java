@@ -76,6 +76,27 @@ public class TelnetController {
 
 
     /**
+     * 将设备回退到特权模式
+     *
+     * @param dev_no  设备编号
+     */
+    public String back_to_enable(String dev_no) {
+        Logger logger = LoggerFactory.getLogger(TelnetController.class);
+        logger.info("Get request, back to enable.");
+        JSONObject result = new JSONObject();
+
+        telnetClient device = get_device(dev_no);
+        if (device == null) {
+            return null_device_return(logger, result, dev_no);
+        } else {
+            Boolean flag = device.back_to_enable();
+            result.put("state", flag);
+            return result.toJSONString();
+        }
+    }
+
+
+    /**
      * 初始化设定串行接口
      *
      * @param dev_no    设备编号

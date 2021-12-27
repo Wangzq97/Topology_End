@@ -31,6 +31,18 @@ public class TelnetClientController {
     }
 
 
+    @RequestMapping(value = "/back_to_enable", method = RequestMethod.POST)
+    public String back_to_enable(@RequestBody JSONObject data) {
+        //login device
+        Logger logger = LoggerFactory.getLogger(TelnetClientController.class);
+        logger.info("POST Request, back to enable.");
+
+        String dev_no = (String) data.get("dev_no");
+
+        return TopologyEndApplication.telnet_controller.back_to_enable(dev_no);
+    }
+
+
     @RequestMapping(value = "/send_command", method = RequestMethod.POST)
     public String send_command(@RequestBody JSONObject data) {
         //login device

@@ -13,6 +13,8 @@ public class telnetClient {
     private String ip = "127.0.0.1";        //设备ip
     private String mask = "24";             //设备掩码
     private String password = "cisco";      //密码
+
+    private int state = -1;                 //路由器模式
     private List<String> static_route_list; //已有的静态路由命令表
 
     private String prompt = "#";        //结束标识字符串,Windows中是>,Linux中是#
@@ -59,11 +61,25 @@ public class telnetClient {
             Boolean result = readUntil("#") != null;
             if (result) {
                 this.ip = ip;
+                state = 0;
             }
             return result;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+
+    /**
+     * 退回到特权模式
+     */
+    public boolean back_to_enable() {
+        int max_time = 10;
+        while (max_time > 0 && state != 0) {
+            sendCommand("exit");
+            max_time--;
+        }
+        return state == 0;
     }
 
 
@@ -330,7 +346,15 @@ public class telnetClient {
         try {
             write(command);
             //            result = new String(result.getBytes("ISO_8859_1"), "GBK");        //转一下编码
-            return readUntil(prompt);
+            String result = readUntil(prompt);
+            if (result.contains("(config)")) {
+                state = 1;
+            } else if (result.contains("(config-if)")) {
+                state = 2;
+            } else {
+                state = 0;
+            }
+            return result;
         } catch (Exception e) {
             e.printStackTrace();
         }
