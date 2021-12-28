@@ -182,6 +182,12 @@ public class TelnetClientController {
     }
 
 
+    @RequestMapping(value = "/config/file", method = RequestMethod.POST)
+    public String config_file(@RequestBody String data) {
+        return TopologyEndApplication.c.filesplit(data);
+    }
+
+
     private String[] get_stringArray_from_jsonArray(JSONArray jsonArray) {
         String[] result = new String[jsonArray.size()];
         for (int i = 0; i < jsonArray.size(); i++) {
