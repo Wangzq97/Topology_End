@@ -441,6 +441,7 @@ public class TelnetController {
                 String msg = "Service error.";
                 result.put("msg", msg);
                 logger.error(msg);
+                logger.error(e.toString());
                 return result.toJSONString();
             }
         }

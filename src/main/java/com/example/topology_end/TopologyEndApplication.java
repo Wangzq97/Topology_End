@@ -15,10 +15,10 @@ public class TopologyEndApplication {
 
 
     public static void main(String[] args) {
-        switch0 = new telnetClient("Switch0","#");
-        router0 = new telnetClient("Router0","#");
-        router1 = new telnetClient("Router1","#");
-        router2 = new telnetClient("Router2","#");
+        switch0 = new telnetClient("VT220","#");
+        router0 = new telnetClient("VT220","#");
+        router1 = new telnetClient("VT220","#");
+        router2 = new telnetClient("VT220","#");
         telnet_controller = new TelnetController();
         c = new Configfile();
         SpringApplication.run(TopologyEndApplication.class, args);

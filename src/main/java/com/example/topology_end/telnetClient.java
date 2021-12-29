@@ -5,6 +5,7 @@ import org.apache.commons.net.telnet.TelnetClient;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -28,16 +29,17 @@ public class telnetClient {
      * @param prompt   结果结束标识
      */
     public telnetClient(String termtype, String prompt) {
-        telnet = new TelnetClient(termtype);
+        this(termtype);
         setPrompt(prompt);
     }
 
     public telnetClient(String termtype) {
         telnet = new TelnetClient(termtype);
+        static_route_list = new ArrayList<>();
     }
 
     public telnetClient() {
-        telnet = new TelnetClient();
+        this("VT220");
     }
 
     /**
@@ -239,9 +241,9 @@ public class telnetClient {
         info.append("\n");
         info.append(sendCommand("router ospf 1"));
         info.append("\n");
-        String segment = calculateSegment(network, mask);
-        String negative_mask = calculateNegativeMask(mask);
-        info.append(sendCommand("network " + segment + ' ' + negative_mask + " area " + area));
+//        String segment = calculateSegment(network, mask);
+//        String negative_mask = calculateNegativeMask(mask);
+        info.append(sendCommand("network " + network + " " + mask + " area " + area));
         info.append("\n");
         info.append(sendCommand("exit"));
         info.append(sendCommand("exit"));
@@ -423,17 +425,21 @@ public class telnetClient {
     }
 
     public static void main(String[] args) {
-        telnetClient telnet = new telnetClient("VT220", "#");        //Windows,用VT220,否则会乱码
-        if (telnet.login("172.16.0.1", 23, "CISCO")) {
-            System.out.println("login");
-            String rs = telnet.sendCommand("show ip route");
+//        telnetClient telnet = new telnetClient("VT220", "#");        //Windows,用VT220,否则会乱码
+//        if (telnet.login("172.16.0.1", 23, "CISCO")) {
+//            System.out.println("login");
+//            String rs = telnet.sendCommand("show ip route");
+////            System.out.println(rs);
+////            try {
+////                rs = new String(rs.getBytes("ISO-8859-1"), "GBK");        //转一下编码
+////            } catch (UnsupportedEncodingException e) {
+////                e.printStackTrace();
+////            }
 //            System.out.println(rs);
-//            try {
-//                rs = new String(rs.getBytes("ISO-8859-1"), "GBK");        //转一下编码
-//            } catch (UnsupportedEncodingException e) {
-//                e.printStackTrace();
-//            }
-            System.out.println(rs);
-        }
+//        }
+        String ip = "192.168.1.0";
+        String mask = "0.0.0.255";
+        System.out.println("segment is: " + calculateSegment(ip, mask));
+        System.out.println("negative mask is: " + calculateNegativeMask(mask));
     }
 }

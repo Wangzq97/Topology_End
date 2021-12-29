@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TelnetClientController {
     @RequestMapping(value = "/")
     public String hello() {
-        return "动态路由后端，Running on http://localhost:8999/";
+        return TopologyEndApplication.telnet_controller.hello();
     }
 
 

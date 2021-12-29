@@ -90,7 +90,6 @@ public class Configfile {
                 String[] command1 = command.split("=");
                 if (command1.length != 2 && !command.equals("Apache")) {
                     result.put("state", false);
-                    logger.info("A");
                     String msg = "wrong command:" + command;
                     result.put("msg", msg);
                     logger.info(msg);
@@ -102,7 +101,6 @@ public class Configfile {
                 if (head.length != 2) {
                     result.put("state", false);
                     String msg = "wrong command:" + command;
-                    logger.info("B");
                     result.put("msg", msg);
                     logger.info(msg);
                     return result.toJSONString();
@@ -118,7 +116,6 @@ public class Configfile {
                     insertArg(methodname, command1[1], ccommands);
                 } else {
                     result.put("state", false);
-                    logger.info("C");
                     String msg = "wrong command:" + command;
                     result.put("msg", msg);
                     logger.info(msg);
@@ -180,7 +177,6 @@ public class Configfile {
                     lomasklist.add("0");
             }
         }
-
 
         if (is_serial)
             telnet_controller.init_serial(router, serial_ip_list, serial_mask_list);
