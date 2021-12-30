@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/")
 public class TelnetClientController {
     @RequestMapping(value = "/")
     public String hello() {
@@ -40,6 +39,18 @@ public class TelnetClientController {
         String dev_no = (String) data.get("dev_no");
 
         return TopologyEndApplication.telnet_controller.back_to_enable(dev_no);
+    }
+
+
+    @RequestMapping(value = "/clear_config", method = RequestMethod.POST)
+    public String clear_config(@RequestBody JSONObject data) {
+        //login device
+        Logger logger = LoggerFactory.getLogger(TelnetClientController.class);
+        logger.info("POST Request, clear config.");
+
+        String dev_no = (String) data.get("dev_no");
+
+        return TopologyEndApplication.telnet_controller.clear_config(dev_no);
     }
 
 

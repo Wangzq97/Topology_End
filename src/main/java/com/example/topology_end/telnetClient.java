@@ -17,10 +17,13 @@ public class telnetClient {
 
     private int state = -1;                 //路由器模式
     private List<String> static_route_list; //已有的静态路由命令表
+    private List<String> loopback_port_list;//已有的回环接口端口列表
 
     private String prompt = "#";        //结束标识字符串,Windows中是>,Linux中是#
     private char promptChar = '>';        //结束标识字符
+
     private TelnetClient telnet;
+
     private InputStream in;                // 输入流,接收返回信息
     private PrintStream out;        // 向服务器写入 命令
 
@@ -36,10 +39,15 @@ public class telnetClient {
     public telnetClient(String termtype) {
         telnet = new TelnetClient(termtype);
         static_route_list = new ArrayList<>();
+        loopback_port_list = new ArrayList<>();
     }
 
     public telnetClient() {
         this("VT220");
+    }
+
+    public List<String> getLoopback_port_list() {
+        return loopback_port_list;
     }
 
     /**
@@ -51,6 +59,7 @@ public class telnetClient {
      */
     public Boolean login(String ip, int port, String password) {
         try {
+            this.distinct();
             telnet.connect(ip, port);
             in = telnet.getInputStream();
             out = new PrintStream(telnet.getOutputStream());
@@ -82,6 +91,31 @@ public class telnetClient {
             max_time--;
         }
         return state == 0;
+    }
+
+
+    /**
+     * 清空设备所有配置
+     */
+    public BooleanResult clear_config() {
+        if(back_to_enable()){
+            BooleanResult clear_router_result = clear_router();
+            if(!clear_router_result.boolean_result){
+                return clear_router_result;
+            }
+
+            BooleanResult clear_serial_result = clear_serial();
+            if(!clear_serial_result.boolean_result){
+                return clear_serial_result;
+            }
+            BooleanResult clear_loopback_result = clear_loopback();
+            if(!clear_loopback_result.boolean_result){
+                return clear_loopback_result;
+            }
+            return new BooleanResult(true, "All config clear successfully.");
+        }else{
+            return new BooleanResult(false, "Cannot enter enable, please check manually in the console.");
+        }
     }
 
 
@@ -140,6 +174,7 @@ public class telnetClient {
         info.append("\n");
         info.append(sendCommand("exit"));
         info.append(sendCommand("exit"));
+        loopback_port_list.add(port);
         return new BooleanResult(true, String.valueOf(info));
     }
 
@@ -252,33 +287,87 @@ public class telnetClient {
 
 
     /**
+     * 清空serial端口
+     */
+    public BooleanResult clear_serial() {
+        if (out == null) {
+            return new BooleanResult(false, "Device not login.");
+        }
+        if(!back_to_enable()){
+            return new BooleanResult(false, "Cannot enter enable, please check manually in the console.");
+        }
+        StringBuilder info = new StringBuilder();
+        info.append(sendCommand("configure terminal")).append("\n");
+
+        info.append(sendCommand("interface s0/0/0")).append("\n");
+        info.append(sendCommand("no ip address")).append("\n");
+        info.append(sendCommand("exit")).append("\n");
+        info.append(sendCommand("interface s0/0/1")).append("\n");
+        info.append(sendCommand("no ip address")).append("\n");
+        info.append(sendCommand("exit")).append("\n");
+
+        info.append(sendCommand("exit"));
+        return new BooleanResult(true, String.valueOf(info));
+    }
+
+
+    /**
+     * 清空回环端口
+     */
+    public BooleanResult clear_loopback() {
+        if (out == null) {
+            return new BooleanResult(false, "Device not login.");
+        }
+        if(!back_to_enable()){
+            return new BooleanResult(false, "Cannot enter enable, please check manually in the console.");
+        }
+        if(loopback_port_list.size()==0){
+            return new BooleanResult(true, "No loopback need to clear.");
+        }
+        StringBuilder info = new StringBuilder();
+        info.append(sendCommand("configure terminal")).append("\n");
+        for (String port : loopback_port_list) {
+            info.append(sendCommand("interface loopback"+port)).append("\n");
+            info.append(sendCommand("no ip address")).append("\n");
+            info.append(sendCommand("exit")).append("\n");
+        }
+        info.append(sendCommand("exit"));
+        loopback_port_list.clear();
+        return new BooleanResult(true, String.valueOf(info));
+    }
+
+
+    /**
      * 清空路由协议
      */
     public BooleanResult clear_router() {
         if (out == null) {
             return new BooleanResult(false, "Device not login.");
         }
+        if(!back_to_enable()){
+            return new BooleanResult(false, "Cannot enter enable, please check manually in the console.");
+        }
         StringBuilder info = new StringBuilder();
         String router_info = sendCommand("show ip protocols");
 
         if (router_info.contains("rip")) {
             //clear RIP
-            info.append(sendCommand("configure terminal"));
-            info.append(sendCommand("no router rip"));
-            info.append(sendCommand("exit"));
+            info.append(sendCommand("configure terminal")).append("\n");
+            info.append(sendCommand("no router rip")).append("\n");
+            info.append(sendCommand("exit")).append("\n");
         }
 
         if (router_info.contains("ospf")) {
             //clear OSPF
-            info.append(sendCommand("configure terminal"));
-            info.append(sendCommand("no router ospf 1"));
-            info.append(sendCommand("exit"));
+            info.append(sendCommand("configure terminal")).append("\n");
+            info.append(sendCommand("no router ospf 1")).append("\n");
+            info.append(sendCommand("exit")).append("\n");
         }
 
         //clear static route
         info.append(sendCommand("configure terminal"));
         for (String command : static_route_list) {
-            info.append(sendCommand("no " + command));
+            info.append(sendCommand("no " + command)).append("\n");
         }
         info.append(sendCommand("exit"));
         static_route_list.clear();

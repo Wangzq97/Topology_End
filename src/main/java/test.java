@@ -1,5 +1,7 @@
 import com.alibaba.fastjson.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class test {
@@ -21,6 +23,17 @@ public class test {
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
+        String[] s_array = new String[5];
+        List<String> s_list = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            s_array[i] = "string num "+i;
+            s_list.add("string num "+i);
+        }
+        JSONObject o = new JSONObject();
+        o.put("s_array",s_array);
+        o.put("s_list", s_list);
+        System.out.println(o.toJSONString());
+
 //        String info = "Router#show interface FastEthernet0/0\n" +
 //                "FastEthernet0/0 is administratively down, line protocol is down (disabled)\n" +
 //                "  Hardware is Lance, address is 000d.bdba.e401 (bia 000d.bdba.e401)\n" +

@@ -67,9 +67,6 @@ public class Configfile {
 
 
     public String filesplit(@RequestBody String data) {
-//		this.initList(acommands);
-//		this.initList(bcommands);
-//		this.initList(ccommands);
         System.out.println(data);
         Logger logger = LoggerFactory.getLogger(Configfile.class);
         logger.info("configuration");
@@ -144,6 +141,7 @@ public class Configfile {
         temp = list.get(1);
         String password = temp.get(0);
         telnet_controller.telnet_login(router, ip, password);
+        telnet_controller.clear_config(router);
         temp = list.get(2);
         String[] serial_ip_list = {"", ""};
         String[] serial_mask_list = {"0", "0"};

@@ -97,6 +97,28 @@ public class TelnetController {
 
 
     /**
+     * 将设备配置清空
+     *
+     * @param dev_no 设备编号
+     */
+    public String clear_config(String dev_no) {
+        Logger logger = LoggerFactory.getLogger(TelnetController.class);
+        logger.info("Get request, clear config.");
+        JSONObject result = new JSONObject();
+
+        telnetClient device = get_device(dev_no);
+        if (device == null) {
+            return null_device_return(logger, result, dev_no);
+        } else {
+            BooleanResult flag = device.clear_config();
+            result.put("state", flag.boolean_result);
+            result.put("msg", flag.string_result);
+            return result.toJSONString();
+        }
+    }
+
+
+    /**
      * 初始化设定串行接口
      *
      * @param dev_no    设备编号
@@ -198,6 +220,28 @@ public class TelnetController {
 
 
     /**
+     * 获取设备回环接口列表信息
+     *
+     * @param dev_no 设备编号
+     */
+    public String get_loopback_list(String dev_no) {
+        //login device
+        Logger logger = LoggerFactory.getLogger(TelnetController.class);
+        logger.info("Get request, get device loopback list.");
+        JSONObject result = new JSONObject();
+
+        telnetClient device = get_device(dev_no);
+        if (device == null) {
+            //device is not exist.
+            return null_device_return(logger, result, dev_no);
+        } else {
+            result.put("loopback_list", device.getLoopback_port_list());
+            return result.toJSONString();
+        }
+    }
+
+
+    /**
      * 获取设备信息（路由表和路由协议）
      *
      * @param dev_no 设备编号
@@ -205,7 +249,7 @@ public class TelnetController {
     public String get_info(String dev_no) {
         //login device
         Logger logger = LoggerFactory.getLogger(TelnetController.class);
-        logger.info("Get request, get device info");
+        logger.info("Get request, get device info.");
         JSONObject result = new JSONObject();
 
         telnetClient device = get_device(dev_no);
