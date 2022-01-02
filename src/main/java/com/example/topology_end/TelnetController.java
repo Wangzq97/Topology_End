@@ -4,6 +4,9 @@ import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TelnetController {
     public String hello() {
         return "动态路由后端，Running on http://localhost:8999/";
@@ -126,7 +129,6 @@ public class TelnetController {
      * @param mask_list 掩码列表（两个，对应s0和s1，格式应形如“255.255.255.0”，如果没有则为“0”）
      */
     public String init_serial(String dev_no, String[] ip_list, String[] mask_list) {
-        //login device
         Logger logger = LoggerFactory.getLogger(TelnetController.class);
         logger.info("Get request, init serial.");
         JSONObject result = new JSONObject();
@@ -181,7 +183,6 @@ public class TelnetController {
      * @param mask   掩码
      */
     public String init_loopback(String dev_no, String port, String ip, String mask) {
-        //login device
         Logger logger = LoggerFactory.getLogger(TelnetController.class);
         logger.info("Get request, init loopback");
         JSONObject result = new JSONObject();
@@ -224,8 +225,38 @@ public class TelnetController {
      *
      * @param dev_no 设备编号
      */
+    public String get_loopback_info(String dev_no) {
+        Logger logger = LoggerFactory.getLogger(TelnetController.class);
+        logger.info("Get request, get device loopback list.");
+        JSONObject result = new JSONObject();
+
+        List<String> port_list = new ArrayList<>();
+        List<String> ip_list = new ArrayList<>();
+
+        telnetClient device = get_device(dev_no);
+        if (device == null) {
+            //device is not exist.
+            return null_device_return(logger, result, dev_no);
+        } else {
+            for(String port : device.getLoopback_port_list()){
+                JSONObject info = JSONObject.parseObject(get_interface_info(dev_no, "loopback"+port));
+                String ip = info.getString("ip");
+                port_list.add(port);
+                ip_list.add(ip);
+            }
+            result.put("port_list", port_list);
+            result.put("ip_list", ip_list);
+            return result.toJSONString();
+        }
+    }
+
+
+    /**
+     * 获取设备回环接口端口列表信息
+     *
+     * @param dev_no 设备编号
+     */
     public String get_loopback_list(String dev_no) {
-        //login device
         Logger logger = LoggerFactory.getLogger(TelnetController.class);
         logger.info("Get request, get device loopback list.");
         JSONObject result = new JSONObject();
@@ -247,7 +278,6 @@ public class TelnetController {
      * @param dev_no 设备编号
      */
     public String get_info(String dev_no) {
-        //login device
         Logger logger = LoggerFactory.getLogger(TelnetController.class);
         logger.info("Get request, get device info.");
         JSONObject result = new JSONObject();
@@ -288,7 +318,6 @@ public class TelnetController {
      * @param interface_name 接口名称
      */
     public String get_interface_info(String dev_no, String interface_name) {
-        //login device
         Logger logger = LoggerFactory.getLogger(TelnetController.class);
         logger.info("Get request, get device interface info");
         JSONObject result = new JSONObject();
@@ -337,7 +366,6 @@ public class TelnetController {
      * @param target_list  下一跳ip列表
      */
     public String config_static(String dev_no, String[] network_list, String[] mask_list, String[] target_list) {
-        //login device
         Logger logger = LoggerFactory.getLogger(TelnetController.class);
         logger.info("Get request, config static.");
         JSONObject result = new JSONObject();
@@ -391,7 +419,6 @@ public class TelnetController {
      * @param mask_list    掩码列表
      */
     public String config_rip(String dev_no, String[] network_list, String[] mask_list) {
-        //login device
         Logger logger = LoggerFactory.getLogger(TelnetController.class);
         logger.info("Get request, config rip.");
         JSONObject result = new JSONObject();
@@ -445,7 +472,6 @@ public class TelnetController {
      * @param area_list    区域列表
      */
     public String config_ospf(String dev_no, String[] network_list, String[] mask_list, String[] area_list) {
-        //login device
         Logger logger = LoggerFactory.getLogger(TelnetController.class);
         logger.info("Get request, config ospf.");
         JSONObject result = new JSONObject();
@@ -498,7 +524,6 @@ public class TelnetController {
      * @param ip     要ping的ip地址
      */
     public String ping(String dev_no, String ip) {
-        //login device
         Logger logger = LoggerFactory.getLogger(TelnetController.class);
         logger.info("Get request, ping.");
         JSONObject result = new JSONObject();

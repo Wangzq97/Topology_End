@@ -32,7 +32,11 @@ public class test {
         JSONObject o = new JSONObject();
         o.put("s_array",s_array);
         o.put("s_list", s_list);
+        o.put("ip","192.168.0.1/24");
         System.out.println(o.toJSONString());
+        JSONObject result= JSONObject.parseObject(o.toJSONString());
+        System.out.println(result.getString("ip"));
+        System.out.println(result.getJSONArray("s_list"));
 
 //        String info = "Router#show interface FastEthernet0/0\n" +
 //                "FastEthernet0/0 is administratively down, line protocol is down (disabled)\n" +

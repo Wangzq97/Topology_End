@@ -111,6 +111,18 @@ public class TelnetClientController {
     }
 
 
+    @RequestMapping(value = "/loopback_info", method = RequestMethod.POST)
+    public String get_loopback_info(@RequestBody JSONObject data) {
+        //login device
+        Logger logger = LoggerFactory.getLogger(TelnetClientController.class);
+        logger.info("POST Request, get device info.");
+
+        String dev_no = (String) data.get("dev_no");
+
+        return TopologyEndApplication.telnet_controller.get_loopback_info(dev_no);
+    }
+
+
     @RequestMapping(value = "/interface_info", method = RequestMethod.POST)
     public String get_interface_info(@RequestBody JSONObject data) {
         //login device
