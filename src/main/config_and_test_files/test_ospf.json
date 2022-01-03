@@ -3,7 +3,7 @@
     "case1": {
       "dev_no": "r0",
       "input": "show ip route",
-      "output": "C       172.16.1.0 is directly connected, Loopback0\nC       172.16.2.0 is directly connected, Loopback1\nC       172.16.3.0 is directly connected, Loopback2\nC    192.168.1.0/24 is directly connected, Serial0/0/1\nO IA 192.168.2.0/24 [110/128] via 192.168.1.1"
+      "output": "172.16.1.0 is directly connected, Loopback0\n172.16.2.0 is directly connected, Loopback1\n172.16.3.0 is directly connected, Loopback2\n192.168.1.0/24 is directly connected, Serial0/0/1\n192.168.2.0/24 [110/128] via 192.168.1.1"
     },
     "case2": {
       "dev_no": "r0",
@@ -23,12 +23,12 @@
     "case5": {
       "dev_no": "r0",
       "input": "show int s0/0/1",
-      "output": "Serial0/0/1 is up, line protocol is up (connected)\n  Hardware is HD64570\n  Internet address is 192.168.1.2/24"
+      "output": "Serial0/0/1 is up, line protocol is up (connected)\nInternet address is 192.168.1.2/24"
     },
     "case6": {
       "dev_no": "r1",
       "input": "show ip route",
-      "output": "O IA    172.16.1.1 [110/65] via 192.168.1.2\nO IA    172.16.2.1 [110/65] via 192.168.1.2\nO IA    172.16.3.1 [110/65] via 192.168.1.2\nC    192.168.1.0/24 is directly connected, Serial0/0/0\nC    192.168.2.0/24 is directly connected, Serial0/0/1"
+      "output": "172.16.1.1 [110/65] via 192.168.1.2\n172.16.2.1 [110/65] via 192.168.1.2\n172.16.3.1 [110/65] via 192.168.1.2\n192.168.1.0/24 is directly connected, Serial0/0/0\n192.168.2.0/24 is directly connected, Serial0/0/1"
     },
     "case7": {
       "dev_no": "r1",
@@ -43,17 +43,17 @@
     "case9": {
       "dev_no": "r1",
       "input": "show int s0/0/0",
-      "output": "Serial0/0/0 is up, line protocol is up (connected)\n  Hardware is HD64570\n  Internet address is 192.168.1.1/24"
+      "output": "Serial0/0/0 is up, line protocol is up (connected)\nInternet address is 192.168.1.1/24"
     },
     "case10": {
       "dev_no": "r1",
       "input": "show int s0/0/1",
-      "output": "Serial0/0/1 is up, line protocol is up (connected)\n  Hardware is HD64570\n  Internet address is 192.168.2.1/24"
+      "output": "Serial0/0/1 is up, line protocol is up (connected)\nInternet address is 192.168.2.1/24"
     },
     "case11": {
       "dev_no": "r2",
       "input": "show ip route",
-      "output": "O IA    172.16.1.1 [110/129] via 192.168.2.1\nO IA    172.16.2.1 [110/129] via 192.168.2.1\nO IA    172.16.3.1 [110/129] via 192.168.2.1\nC       172.24.2.0 is directly connected, Loopback0\nO IA 192.168.1.0/24 [110/128] via 192.168.2.1\nC    192.168.2.0/24 is directly connected, Serial0/0/0"
+      "output": "172.16.1.1 [110/129] via 192.168.2.1\n172.16.2.1 [110/129] via 192.168.2.1\n172.16.3.1 [110/129] via 192.168.2.1\n172.24.2.0 is directly connected, Loopback0\n192.168.1.0/24 [110/128] via 192.168.2.1\n192.168.2.0/24 is directly connected, Serial0/0/0"
     },
     "case12": {
       "dev_no": "r2",
@@ -73,7 +73,7 @@
     "case15": {
       "dev_no": "r2",
       "input": "show int s0/0/0",
-      "output": "Serial0/0/0 is up, line protocol is up (connected)\n  Hardware is HD64570\n  Internet address is 192.168.2.2/24"
+      "output": "Serial0/0/0 is up, line protocol is up (connected)\nInternet address is 192.168.2.2/24"
     }
   }
 }

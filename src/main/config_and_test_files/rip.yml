@@ -1,0 +1,14 @@
+RouterA.ip=172.16.0.1
+RouterA.password=CISCO
+RouterA.port=s0/0/1:192.168.1.2 255.255.255.0,lo0:172.16.1.1 255.255.0.0,lo1:172.16.2.1 255.255.0.0,lo2:172.16.3.1 255.255.0.0
+RouterA.command=router rip,network 192.168.1.0 255.255.255.0,network 172.16.0.0 255.255.0.0
+
+RouterB.ip=172.16.0.2
+RouterB.password=CISCO
+RouterB.port=s0/0/0:192.168.1.1 255.255.255.0,s0/0/1:192.168.2.1 255.255.255.0
+RouterB.command=router rip,network 192.168.1.0 255.255.255.0,network 192.168.2.0 255.255.255.0
+
+RouterC.ip=172.16.0.3
+RouterC.password=CISCO
+RouterC.port=s0/0/0:192.168.2.2 255.255.255.0,lo0:172.24.2.1 255.255.255.0
+RouterC.command=router rip,network 192.168.2.0 255.255.255.0,network 172.24.0.0 255.255.0.0
