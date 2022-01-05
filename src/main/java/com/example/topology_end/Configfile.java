@@ -56,6 +56,7 @@ public class Configfile {
     }
 
     private void initList(List<List> l) {
+        l.clear();
         l.add(new ArrayList<String>());
         l.add(new ArrayList<String>());
         l.add(new ArrayList<String>());
@@ -67,6 +68,9 @@ public class Configfile {
 
 
     public String filesplit(@RequestBody String data) {
+        initList(acommands);
+        initList(bcommands);
+        initList(ccommands);
         System.out.println(data);
         Logger logger = LoggerFactory.getLogger(Configfile.class);
         logger.info("configuration");
