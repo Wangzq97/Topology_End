@@ -76,7 +76,7 @@ public class Configfile {
         logger.info("configuration");
         JSONObject result = new JSONObject();
         //ip,password?
-        String[] commands = data.split("\r\n");
+        String[] commands = data.split("\n");
         if (commands.length == 0) {
             result.put("state", false);
             String msg = "empty file!!!";

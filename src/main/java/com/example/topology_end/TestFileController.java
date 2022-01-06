@@ -12,7 +12,8 @@ import java.util.Map;
 @Controller
 public class TestFileController {
     @RequestMapping(value = "/verify",method = RequestMethod.POST)
-    public String test_file(@RequestBody String verify_content){
+    public String test_file(@RequestBody JSONObject data){
+        String verify_content = data.getString("verify_content");
         JSONObject res = new JSONObject();
         JSONObject jsonObj = JSONObject.parseObject(verify_content);
         JSONObject test = jsonObj.getJSONObject("test");

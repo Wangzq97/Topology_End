@@ -206,8 +206,9 @@ public class TelnetClientController {
 
 
     @RequestMapping(value = "/config/file", method = RequestMethod.POST)
-    public String config_file(@RequestBody String data) {
-        return TopologyEndApplication.c.filesplit(data);
+    public String config_file(@RequestBody JSONObject data) {
+        String config_content = data.getString("config_content");
+        return TopologyEndApplication.c.filesplit(config_content);
     }
 
 
