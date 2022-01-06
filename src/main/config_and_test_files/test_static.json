@@ -18,7 +18,7 @@
     "case4": {
       "dev_no": "r0",
       "input": "show int s0/0/1",
-      "output": "Serial0/0/1 is up, line protocol is up (connected)\nInternet address is 192.168.12.1/24"
+      "output": "Serial0/0/1 is up, line protocol is up\nInternet address is 192.168.12.1/24"
     },
     "case5": {
       "dev_no": "r1",
@@ -38,12 +38,12 @@
     "case8": {
       "dev_no": "r1",
       "input": "show int s0/0/0",
-      "output": "Serial0/0/0 is up, line protocol is up (connected)\nInternet address is 192.168.12.2/24"
+      "output": "Serial0/0/0 is up, line protocol is up\nInternet address is 192.168.12.2/24"
     },
     "case9": {
       "dev_no": "r1",
       "input": "show int s0/0/1",
-      "output": "Serial0/0/1 is up, line protocol is up (connected)\nInternet address is 192.168.23.2/24"
+      "output": "Serial0/0/1 is up, line protocol is up\nInternet address is 192.168.23.2/24"
     },
     "case10": {
       "dev_no": "r2",
@@ -63,7 +63,7 @@
     "case13": {
       "dev_no": "r2",
       "input": "show int s0/0/0",
-      "output": "Serial0/0/0 is up, line protocol is up (connected)\nInternet address is 192.168.23.3/24"
+      "output": "Serial0/0/0 is up, line protocol is up\nInternet address is 192.168.23.3/24"
     }
   }
 }

@@ -1,6 +1,5 @@
 package com.example.topology_end;
 
-import org.apache.commons.net.telnet.TelnetClient;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

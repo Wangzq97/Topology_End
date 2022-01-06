@@ -228,10 +228,9 @@ public class TelnetController {
     public String get_loopback_info(String dev_no) {
         Logger logger = LoggerFactory.getLogger(TelnetController.class);
         logger.info("Get request, get device loopback list.");
-        JSONObject result = new JSONObject();
 
-        List<String> port_list = new ArrayList<>();
-        List<String> ip_list = new ArrayList<>();
+        JSONObject result = new JSONObject();
+        List<String> result_list = new ArrayList<>();
 
         telnetClient device = get_device(dev_no);
         if (device == null) {
@@ -241,11 +240,9 @@ public class TelnetController {
             for(String port : device.getLoopback_port_list()){
                 JSONObject info = JSONObject.parseObject(get_interface_info(dev_no, "loopback"+port));
                 String ip = info.getString("ip");
-                port_list.add(port);
-                ip_list.add(ip);
+                result_list.add("loopback"+port+": "+ip);
             }
-            result.put("port_list", port_list);
-            result.put("ip_list", ip_list);
+            result.put("result_list", result_list);
             return result.toJSONString();
         }
     }

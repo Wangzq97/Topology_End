@@ -118,7 +118,7 @@ public class Configfile {
 
         commandconfig("r0",acommands);
         commandconfig("r1",bcommands);
-        commandconfig("r3",ccommands);
+        commandconfig("r2",ccommands);
         
         execute("r0", acommands);
         execute("r1", bcommands);
