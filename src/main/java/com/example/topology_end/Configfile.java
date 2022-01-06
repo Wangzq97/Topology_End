@@ -127,7 +127,11 @@ public class Configfile {
             }
         }
         executeCommands();
-        return "";
+        result.put("state", true);
+        String msg = "Config success.";
+        result.put("msg", msg);
+        logger.info(msg);
+        return result.toJSONString();
     }
 
     private void executeCommands() {
