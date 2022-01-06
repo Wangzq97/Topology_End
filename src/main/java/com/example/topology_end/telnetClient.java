@@ -438,8 +438,8 @@ public class telnetClient {
     public String sendCommand(String command) {
         try {
             write(command);
-            //            result = new String(result.getBytes("ISO_8859_1"), "GBK");        //转一下编码
             String result = readUntil(prompt);
+            result = new String(result.getBytes("ISO_8859_1"), "GBK");        //转一下编码
             if (result.contains("(config)")) {
                 state = 1;
             } else if (result.contains("(config-if)")) {

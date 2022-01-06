@@ -22,21 +22,24 @@ public class test {
     }
 
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        String[] s_array = new String[5];
-        List<String> s_list = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            s_array[i] = "string num "+i;
-            s_list.add("string num "+i);
-        }
-        JSONObject o = new JSONObject();
-        o.put("s_array",s_array);
-        o.put("s_list", s_list);
-        o.put("ip","192.168.0.1/24");
-        System.out.println(o.toJSONString());
-        JSONObject result= JSONObject.parseObject(o.toJSONString());
-        System.out.println(result.getString("ip"));
-        System.out.println(result.getJSONArray("s_list"));
+//        Scanner sc = new Scanner(System.in);
+//        String[] s_array = new String[5];
+//        List<String> s_list = new ArrayList<>();
+//        for (int i = 0; i < 5; i++) {
+//            s_array[i] = "string num " + i;
+//            s_list.add("string num " + i);
+//        }
+//        JSONObject o = new JSONObject();
+//        o.put("s_array", s_array);
+//        o.put("s_list", s_list);
+//        o.put("ip", "192.168.0.1/24");
+////        System.out.println(o.toJSONString());
+//        JSONObject result = new JSONObject();
+//        result.put("o",o.toJSONString());
+//        System.out.println(result.toJSONString());
+        String s = "xxx [11/22] yyy";
+        s=s.replaceAll(" \\[.*\\] ", " ");
+        System.out.println(s);
 
 //        String info = "Router#show interface FastEthernet0/0\n" +
 //                "FastEthernet0/0 is administratively down, line protocol is down (disabled)\n" +
