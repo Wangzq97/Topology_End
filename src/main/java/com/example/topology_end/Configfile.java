@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import static com.example.topology_end.TopologyEndApplication.telnet_controller;
 
 public class Configfile {
-    Map<String, MethodStrategy> map = new HashMap<>();
     List<List> acommands = new ArrayList<>();
     List<List> bcommands = new ArrayList<>();
     List<List> ccommands = new ArrayList<>();
@@ -26,37 +25,10 @@ public class Configfile {
         initList(acommands);
         initList(bcommands);
         initList(ccommands);
-        //
-        //
-        //
-    }
-
-
-    public static void main(String[] args) {
-        Configfile c = new Configfile();
-        String config = "Apache\n" +
-                "RouterA.ip=172.16.0.1\n" +
-                "RouterA.password=CISCO\n" +
-                "RouterA.port=s0/0/1:192.168.1.2,lo0:172.16.1.1,lo1:172.16.2.1,lo2:172.16.3.1\n" +
-                "RouterA.command=router ospf 1,network 192.168.1.0 0.0.0.255 area 0,network 172.16.0.0 0.0.255.255 area 1\n" +
-                "RouterA.ping=192.168.1.1,192.168.2.1,192.168.2.2\n" +
-                "\n" +
-                "RouterB.ip=172.16.0.2\n" +
-                "RouterB.password=CISCO\n" +
-                "RouterB.port=s0/0/0:192.168.1.1,s0/0/1:192.168.2.1\n" +
-                "RouterB.command=router ospf 1,network 192.168.1.0 0.0.0.255 area 0,network 192.168.2.0 0.0.0.255 area 51\n" +
-                "RouterB.ping=192.168.1.2,192.168.2.2\n" +
-                "\n" +
-                "RouterC.ip=172.16.0.3\n" +
-                "RouterC.password=CISCO\n" +
-                "RouterC.port=s0/0/0:192.168.2.2,lo0:172.24.2.1\n" +
-                "RouterC.command=router ospf 1,network 192.168.2.0 0.0.0.255 area 51\n" +
-                "RouterC.ping=192.168.1.2,192.168.1.1,192.168.2.1";
-        c.filesplit(config);
     }
 
     private void initList(List<List> l) {
-        l.clear();
+    	l.clear();
         l.add(new ArrayList<String>());
         l.add(new ArrayList<String>());
         l.add(new ArrayList<String>());
@@ -68,14 +40,14 @@ public class Configfile {
 
 
     public String filesplit(@RequestBody String data) {
-        initList(acommands);
-        initList(bcommands);
-        initList(ccommands);
-        System.out.println(data);
+		initList(acommands);
+		initList(bcommands);
+ 		initList(ccommands);
+ 		
         Logger logger = LoggerFactory.getLogger(Configfile.class);
         logger.info("configuration");
         JSONObject result = new JSONObject();
-        //ip,password?
+//      String[] commands = data.split("\r\n");
         String[] commands = data.split("\n");
         if (commands.length == 0) {
             result.put("state", false);
@@ -135,22 +107,34 @@ public class Configfile {
     }
 
     private void executeCommands() {
+        loginconfig("r0",acommands);
+        portconfig("r0",acommands);
+
+        loginconfig("r1",bcommands);
+        portconfig("r1",bcommands);
+
+        loginconfig("r2",ccommands);
+        portconfig("r2",ccommands);
+
+        commandconfig("r0",acommands);
+        commandconfig("r1",bcommands);
+        commandconfig("r3",ccommands);
+        
         execute("r0", acommands);
         execute("r1", bcommands);
         execute("r2", ccommands);
     }
-
-    private void execute(String router, List<List> list) {
-        for (List<String> l : list) {
-            System.out.println(l.size());
-        }
+    private void loginconfig(String router, List<List> list)
+    {
         List<String> temp = list.get(0);
         String ip = temp.get(0);
         temp = list.get(1);
         String password = temp.get(0);
         telnet_controller.telnet_login(router, ip, password);
-        telnet_controller.clear_config(router);
-        temp = list.get(2);
+    }
+    private void portconfig (String router, List<List> list)
+    {
+        List<String> temp = list.get(2);
         String[] serial_ip_list = {"", ""};
         String[] serial_mask_list = {"0", "0"};
         Boolean is_serial = false;
@@ -169,7 +153,7 @@ public class Configfile {
             } else if (ports[0].contains("s0/0/1")) {
                 is_serial = true;
                 String[] lll = portcommand.substring(7).split(" ");
-                serial_ip_list[0] = lll[0];
+                serial_ip_list[1] = lll[0];
                 if (lll.length != 1)
                     serial_mask_list[1] = lll[1];
                 else
@@ -183,13 +167,15 @@ public class Configfile {
                     lomasklist.add("0");
             }
         }
-
         if (is_serial)
             telnet_controller.init_serial(router, serial_ip_list, serial_mask_list);
         for (int i = 0; i < loiplist.size(); ++i) {
             telnet_controller.init_loopback(router, String.valueOf(i), loiplist.get(i), lomasklist.get(i));
         }
-        temp = list.get(3);
+    }
+    private void commandconfig(String router, List<List> list)
+    {
+        List<String> temp = list.get(3);
         List<String> networklist = new ArrayList<>();
         List<String> masklist = new ArrayList<>();
         List<String> targetlist = new ArrayList<>();
@@ -205,22 +191,18 @@ public class Configfile {
                 else if (strs.length == 5) arealist.add(strs[4]);
             }
         }
-
-        System.out.println(networklist.size());
-        System.out.println(masklist.size());
-        System.out.println(arealist.size());
-        System.out.println("protocol: " + protocol);
-
-        if (protocol.equals("ospf"))
-            telnet_controller.config_ospf(router, networklist.toArray(new String[0]), masklist.toArray(new String[0]), arealist.toArray(new String[0]));
-        else if (protocol.equals("rip"))
-            telnet_controller.config_rip(router, networklist.toArray(new String[0]), masklist.toArray(new String[0]));
-        else
-            telnet_controller.config_static(router, networklist.toArray(new String[0]), masklist.toArray(new String[0]), targetlist.toArray(new String[0]));
-        temp = list.get(4);
+        if (protocol.equals("ospf"))telnet_controller.config_ospf(router, networklist.toArray(new String[0]), masklist.toArray(new String[0]), arealist.toArray(new String[0]));
+        else if (protocol.equals("rip"))telnet_controller.config_rip(router, networklist.toArray(new String[0]), masklist.toArray(new String[0]));
+        else telnet_controller.config_static(router, networklist.toArray(new String[0]), masklist.toArray(new String[0]), targetlist.toArray(new String[0]));
+    }
+    private void execute(String router, List<List> list) {
+        //ping
+        List<String> temp = list.get(4);
         for (String s : temp) telnet_controller.ping(router, s);
+        //show
         temp = list.get(5);
         for (int i = 0; i < temp.size(); ++i) telnet_controller.get_info(router);
+        //showtest
         temp = list.get(6);
 
     }
@@ -250,18 +232,4 @@ public class Configfile {
             for (int i = 0; i < Args.length; i++) list.get(6).add(Args[i]);
         }
     }
-}
-
-interface MethodStrategy {
-    public String execute(String router, String args);
-}
-
-class PingMethod implements MethodStrategy {
-
-    @Override
-    public String execute(String router, String args) {
-
-        return null;
-    }
-
 }
